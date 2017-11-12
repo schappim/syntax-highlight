@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>title</title>
+
+    <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+              <link rel="stylesheet" href="/style.css">
+
+  </head>
+  <body>
+    <!-- page content -->
+    <pre><code id="code" class="c++">
+const int AOUTpin = 0; //the AOUT pin of the alcohol sensor goes into analog pin A0 of the arduino
+const int DOUTpin = 8; //the DOUT pin of the alcohol sensor goes into digital pin D8 of the arduino
+const int ledPin  = 13; //the anode of the LED connects to digital pin D13 of the arduino
+
+int limit;
+int value;
+
+void setup() {
+    Serial.begin(115200); //sets the baud rate
+    pinMode(DOUTpin, INPUT); //sets the pin as an input to the arduino
+    pinMode(ledPin, OUTPUT); //sets the pin as an output of the arduino
+}
+
+void loop()
+{
+    value= analogRead(AOUTpin); //reads the analaog value from the alcohol sensor's AOUT pin
+    limit= digitalRead(DOUTpin); //reads the digital value from the alcohol sensor's DOUT pin
+    Serial.print("Alcohol value: ");
+    Serial.println(value); //prints the alcohol value
+    Serial.print("Limit: ");
+    Serial.print(limit); //prints the limit reached as either LOW or HIGH (above or underneath)
+    delay(100);
+    if (limit == HIGH){
+        digitalWrite(ledPin, HIGH); //if limit has been reached, LED turns on as status indicator
+    }
+    else{
+        digitalWrite(ledPin, LOW); //if threshold not reached, LED remains off
+    }
+}
+</code></pre>
+
+<canvas id="canvas"></canvas>
+<a id="download" href="#">D</a>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="/html2canvas.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script>
+
+function downloadCanvas(link, canvasId, filename) {
+    link.href = document.getElementById(canvasId).toDataURL();
+    link.download = filename;
+}
+
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * This is the function that will take care of image extracting and
+ * setting proper filename for the download.
+ * IMPORTANT: Call it from within a onclick event.
+*/
+function downloadCanvas(link, canvasId, filename) {
+    link.href = document.getElementById(canvasId).toDataURL();
+    link.download = filename;
+}
+
+/** 
+ * The event handler for the link's onclick event. We give THIS as a
+ * parameter (=the link element), ID of the canvas and a filename.
+*/
+function download(){
+        var download = document.getElementById("download");
+        var image = document.getElementById("my_canvas").toDataURL("image/png")
+                    .replace("image/png", "image/octet-stream");
+              download.setAttribute("href", image);
+    }
+
+
+async function demo() {
+  console.log('Taking a break...');
+  await sleep(2000);
+  console.log('Two second later');
+
+  code = document.getElementById("code");
+
+
+html2canvas(code, {
+  onrendered: function(canvas) {
+    document.body.appendChild(canvas);
+  },
+  width: 3048,
+  height: 2160
+});
+  await sleep(1000);
+download();
+
+
+
+}
+
+demo();
+
+
+
+
+
+</script>
+
+  </body>
+</html>
